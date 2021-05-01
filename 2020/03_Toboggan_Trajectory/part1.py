@@ -1,0 +1,25 @@
+#!/usr/bin/python3
+
+import sys
+
+debug = False
+with open(sys.argv[1], mode='r') as inputfile:
+    t = inputfile.read().strip().split('\n')
+for o in t:
+    print(o)
+
+long = len(t[0])
+x = y = 0
+c = 0
+
+while True:
+    y = (y+3) % long
+    x += 1
+    try:
+        print("%i  %i  %s" %(x,y,t[x][y]))
+        if t[x][y] == '#':
+            c += 1
+    except:
+        print(c)
+        sys.exit(0)
+
