@@ -22,7 +22,7 @@ for line in t:
     else:          # if listing of files/dirs
         (nodesize, nodename) = line.split(' ')
         pathstr = "/".join(path)
-        pathstr = pathstr[1:]   #skip first /
+        pathstr = pathstr[1:]   #remove first /
         if not 'dir' in nodesize:  # if a file
             pathstr = pathstr + "/" + nodename
             sizes[pathstr] = int(nodesize)
@@ -30,26 +30,35 @@ for line in t:
             pathstr = pathstr + "/" + nodename + "/"
             sizes[pathstr] = 0
 
-
 for key in sorted(sizes.keys()):
     if key == "/": continue
+    #print("file="+key+"   size="+str(sizes[key]))
     if key[-1:] != "/":    #if a file
         dd = re.sub(r'(.*/).*$', r'\1', key)
         while True:
+            #print("dd="+dd)
             if dd != "/":
                 sizes[dd] += sizes[key]
             dd = re.sub(r'(.*/).*/$', r'\1', dd)
             if dd == "/":
+                #print("old root size="+str(sizes["/"]))
                 sizes["/"] += sizes[key]
+                #print("new root size="+str(sizes["/"]))
                 break
 
-total = 0
+left = 70000000 - sizes["/"]
+need = 30000000 - left
+smallest = 70000000
+print("need="+str(need))
+
 for key in sorted(sizes.keys()):
-    if key == "/": continue
+    if key == "/":
+        print("dir="+key+"   size="+str(sizes[key]))
+        continue
     if key[-1:] == "/":    #if a dir
-        if sizes[key] < 100000:
-            total += sizes[key]
+        print("dir="+key+"   size="+str(sizes[key]))
+        if sizes[key] > need and smallest > sizes[key]:
+            smallest = sizes[key]
 
 
-print("total="+str(total))
-
+print(smallest)
