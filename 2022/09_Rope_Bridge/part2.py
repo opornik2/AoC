@@ -2,66 +2,72 @@
 
 import sys
 from collections import defaultdict
+import math
 
 def dist(t,h):
     return max(abs(t[0]-h[0]), abs(t[1]-h[1]))
 
 
-def right(knot):
-    r[knot][0] += 1   # if > 2 then move right
-    if r[knot][1] != r[knot-1][1]:  # if y != Y then Y equal to n-1
-        r[knot][1] = r[knot-1][1]  #if diagonal
+def col_round(x):
+    if x >= 0.0:
+        return math.floor(x + 0.5)
+    else:
+        return math.ceil(x - 0.5)
 
-
-def left(knot):
-    r[knot][0] -= 1   # if too long
-    if r[knot][1] != r[knot-1][1]:
-        r[knot][1] = r[knot-1][1]  #if diagonal
-
-
-def up(knot):
-    r[knot][1] += 1   # if too long
-    if r[knot][0] != r[knot-1][0]:
-        r[knot][0] = r[knot-1][0]  #if diagonal
-
-
-def down(knot):
-    r[knot][1] -= 1   # if too long
-    if r[knot][0] != r[knot-1][0]:
-        r[knot][0] = r[knot-1][0]  #if diagonal
+def draw(): 
+    box = 15
+    for i in range(100+box, 100-box-1, -1):
+        for j in range(100-box, 100+box+1):
+            char = "•"
+            for n in range(knots-1, -1, -1):
+                try:
+                    if r[n][0]==j and r[n][1]==i:
+                        char = str(n)
+                        if n==0: char = "H"
+                except:
+                    pass
+            if i==100 and j==100: char = "s"
+            print(char, end="")
+        print("\n")
+    print("\n")
 
 
 ###############################################################################
 
 
-with open(sys.argv[1], mode='r') as input:
-    fi = input.read().strip().split('\n')
+with open(sys.argv[1], mode='r') as infile:
+    fi = infile.read().strip().split('\n')
 
-r = [[0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0], [0,0]]
 seen = defaultdict(dict)
 count = 0
+knots = 10
+tail = knots-1
+r = []
+for i in range(0, knots):
+    r.append([100,100])
 
 for line in fi:
     print(f"\nline: {line}")
     #print(f"before {r}")
     (dire, steps) = line.split(" ")
     steps = int(steps)
-    seen[r[9][0]][r[9][1]] = 1
+    seen[r[tail][0]][r[tail][1]] = 1
     for _ in range(1, steps+1):
         if dire   == "R": r[0][0] += 1
         elif dire == "L": r[0][0] -= 1
         elif dire == "U": r[0][1] += 1
         elif dire == "D": r[0][1] -= 1
-        for knot in range(1,10):
+        for knot in range(1,knots):
             di = dist(r[knot-1], r[knot])
-            print(f"dist  {knot-1}-{knot} = {di}")
-            if dist(r[knot-1], r[knot]) > 1:
-                if dire   == "R": right(knot)
-                elif dire == "L": left(knot)
-                elif dire == "U": up(knot)
-                elif dire == "D": down(knot)
-        print(f"middle {r}")
-        seen[r[9][0]][r[9][1]] = 1
+            #print(f"dist  {knot-1}-{knot} = {di}")
+            if di > 1:
+                r[knot][0] += col_round((r[knot-1][0] - r[knot][0])/2)
+                r[knot][1] += col_round((r[knot-1][1] - r[knot][1])/2)
+        #print(f"middle {r}")
+        seen[r[tail][0]][r[tail][1]] = 1
+        draw()
+        #input()
+
     #print(f"after  {r}")
 
 for k in seen.keys():
