@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import sys
-from collections import defaultdict
 import queue
 
 inspect = [0,0,0,0,0,0,0,0]
