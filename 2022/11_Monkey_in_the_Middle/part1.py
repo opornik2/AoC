@@ -3,7 +3,6 @@
 import sys
 from collections import defaultdict
 import queue
-#import numpy
 
 inspect = [0,0,0,0,0,0,0,0]
 qu = []
