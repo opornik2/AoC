@@ -45,31 +45,35 @@ max_cols = len(t[0])
 partno_l = []
 summ = 0
 partid = False
-gear = {}
+gear = defaultdict(dict)
+gear_pos = False
 
 for row, line in enumerate(t):
-    print(line)
+    #print(line)
     for col, el in enumerate(line):
-        print(f"{row},{col}")
-        print(el)
+        #print(f"{row},{col}")
+        #print(el)
         if el.isdigit():
             partno_l.append(el)
-            gear_pos = find_gear(row, col)
+            if gear_pos == False:
+                gear_pos = find_gear(row, col)
             if gear_pos != False:
                 partid = True
-                try: gear[gear_pos]
-                except: gear[gear_pos] = 1
+                try: gear[gear_pos][0]
+                except: gear[gear_pos] = []
         if col == max_cols-1 or not t[row][col+1].isdigit():
             if len(partno_l) > 0:
-                partno = int("".join(partno_l))
-                if gear_pos != False:
-                    gear[gear_pos] *= partno
-                partno_l=[]
                 if partid == True:
-                    summ += gear[gear_pos]
-                    partid = False
-                    gear_pos=""
-                    print(partno)
+                    partno = int("".join(partno_l))
+                    gear[gear_pos].append(partno)
+                    print(f"partno={partno}")
+                partno_l=[]
+                partid = False
+                gear_pos = False
+
+for key in gear:
+    if len(gear[key]) == 2:
+        summ += gear[key][0] * gear[key][1]
 
 print(summ)
 
