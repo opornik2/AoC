@@ -7,26 +7,28 @@ import re
 with open(sys.argv[1], mode='r') as input:
     t = input.read().strip().split("\n")
 
-cards={}
+cards=0
 summ=0
 copy={}
-for i in range (1,210): copy{i} = 1
+for i in range (1,210): copy[i] = 1
 
 for line in t:
-    print(line)
+    #print(line)
     match = re.search('Card +(\d+): (.*)',line)
     game = int(match.group(1))
-    cards{game} += 1
     winning = re.split(r' +', match.group(2).split("|")[0].strip())
     owned = re.split(r' +', match.group(2).split("|")[1].strip())
     points = 0
     for w in winning:
-        if w in owned:
-            points += 1
-    for p in range(1, points+1):
-        copy{game+p} += 1
+        if w in owned: points += 1
+
+    while copy[game] > 0:
+        cards += 1
+        copy[game] -= 1
+        for p in range(1, points+1):
+            copy[game+p] += 1
 
 
 
 
-print(summ)
+print(cards)
