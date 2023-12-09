@@ -23,15 +23,42 @@ l2t = []
 t2h = []
 h2l = []
 
+def parse (array, line):
+    (des, sou, ran) = line.split(" ")
+    array.append({"des":int(des), "sou":int(sou), "ran":int(ran)})
+
+
 def mapping(rule_arr, in_arr):
     out_arr = []
-    for r in rule_arr:
-        s_st = r['sou']
-        s_en = r['sou'] + r['ran']
-        if num >= s_st and num<= s_en+1:
-            return r['des'] + num - r['sou']
+    while len(in_arr) > 0:
+        in_range = in_arr.pop()
+        in_start = in_arr.pop()
+        in_end = in_start + in_range - 1
+        matched = False
+        for r in rule_arr:
+            # r['sou'], r['ran'], r['des']
+            sou_start = r['sou']
+            sou_end = r['sou'] + r['ran'] -1
+            des_start = r['des']
+            if in_start >= sou_start and in_start <= sou_end:
+                if in_end <= sou_end:  #caly zakres sie pokrywa
+                    out_arr.append(in_start - sou_start + des_start)
+                    out_arr.append(in_range)
+                    matched = True
+                else:
+                    out_arr.append(in_start - sou_start + des_start)
+                    out_arr.append(sou_end - in_start + 1)
+                    in_arr.append(sou_end + 1)
+                    in_arr.append(in_range - (sou_end - in_start + 1))
+                    matched = True
+        if matched == False:
+                out_arr.append(in_start)
+                out_arr.append(in_range)
     return out_arr
 
+#===========================================================================
+#===========================================================================
+#===========================================================================
 
 
 for line in t:
@@ -106,19 +133,20 @@ for line in t:
     parse(h2l, line)
 
 soils = mapping(s2s, seeds)
+print("soils",soils)
+ferts = mapping(s2f, soils)
+print("ferts",ferts)
+water = mapping(f2w, ferts)
+print("water",water)
+light = mapping(w2l, water)
+print("light",light)
+tempe = mapping(l2t, light)
+print("tempe",tempe)
+humid = mapping(t2h, tempe)
+print("humid",humid)
+locat = mapping(h2l, humid)
+print("locat",locat)
 
-for num in soils: ferts.append(mapping(s2f, num))
-for num in ferts: water.append(mapping(f2w, num))
-for num in water: light.append(mapping(w2l, num))
-for num in light: tempe.append(mapping(l2t, num))
-for num in tempe: humid.append(mapping(t2h, num))
-for num in humid: locat.append(mapping(h2l, num))
-print(min(locat))
-
-
-def parse (array, line):
-    (des, sou, ran) = line.split(" ")
-    array.append({"des":int(des), "sou":int(sou), "ran":int(ran)})
-
-
+result = [locat[i] for i in range(0, len(locat), 2)]
+print(min(result))
 
