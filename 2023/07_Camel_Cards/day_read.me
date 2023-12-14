@@ -1,0 +1,12 @@
+tags: poker cards, translate string
+edge cases:
+problems: 
+  - change high card values to numbers to proces further
+  - detect type of hand
+  - sort list (cards in hand) by card strength
+  - fit detect best joker substitution based on hand type
+improve:
+algo:
+  - table = str.maketrans('TJQKA', 'a1cde')
+    hand2 = hand.translate(table)
+  - use collections.Counter to count number of occurrences of each list element ["ACABA"] -> {"A": 3, "B": 1, "C": 1}
