@@ -11,19 +11,19 @@ def print_array(a):
 def find_mirror(grid, max_smudges):
     global summ
     seen = []
+    grid = ["".join(row) for row in grid]
     for i in range(0,len(grid)-1):
-        if grid[i] == grid[i+1]: #axis found
-            seen = grid[i::-1]
-            rest = grid[i+1:i+1+len(seen)]
-            seen = seen[:len(rest)]
-            intersection = [ j for j in range(0, len(seen)) if seen[j]==rest[j] ]
-            if len(intersection) == len(seen):
-                axis = i+1
-                print(f"axis={axis}")
-                #print_array(reversed(seen))
-                #print("---")
-                #print_array(rest)
-                return axis
+        seen = grid[i::-1]
+        rest = grid[i+1:i+1+len(seen)]
+        seen = seen[:len(rest)]
+        diff = [ 1 for pair in zip(seen, rest) for k in range (0, len(pair[0])) if pair[0][k]!=pair[1][k] ]
+        if len(diff) == max_smudges:
+            axis = i+1
+            print(f"axis={axis}")
+            #print_array(reversed(seen))
+            #print("---")
+            #print_array(rest)
+            return axis
     return 0
 
 with open(sys.argv[1], mode='r') as input:
