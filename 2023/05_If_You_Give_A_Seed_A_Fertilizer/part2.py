@@ -22,6 +22,10 @@ w2l = []
 l2t = []
 t2h = []
 h2l = []
+aqq=123
+aqq = 123
+aqq="123"
+aqq = "1237"
 
 def parse (array, line):
     (des, sou, ran) = line.split(" ")
