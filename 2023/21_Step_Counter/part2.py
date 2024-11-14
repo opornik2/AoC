@@ -2,7 +2,7 @@
 
 import sys
 
-steps = int(sys.argv[2])
+steps = steps = int(sys.argv[2]) # 26501365
 
 def print_dic(a):
     for r in range(maxrow):
@@ -44,7 +44,7 @@ grid = grid2cplxdic(t)
 #find start
 for y, line in enumerate(t):
     if "S" in line:
-        startpoint = complex(line.index("S"), y)
+        startpoint = complex(y, line.index("S"))
         break
 
 grid[startpoint] = "."
@@ -53,7 +53,11 @@ visited.add(startpoint)
 for _ in range(steps):
     neigh = set()
     for point in visited:
-        [ neigh.add(point + i) for i in (-1, 1, 0-1j, 0+1j) if grid[point + i] == "." ]
+        for i in (-1, 1, 0-1j, 0+1j):
+            try:
+                if grid[point + i] == ".":
+                    neigh.add(point + i)
+            except: pass
     #flip state
     for point in neigh:
         if grid[point] == ".":
