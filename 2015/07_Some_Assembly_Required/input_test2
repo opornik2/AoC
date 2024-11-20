@@ -1,0 +1,5 @@
+x AND y -> d
+NOT g -> h
+123 -> x
+d RSHIFT 2 -> g
+456 -> y
