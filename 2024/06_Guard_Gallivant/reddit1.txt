@@ -1,0 +1,3 @@
+https://www.reddit.com/r/adventofcode/comments/1h9sxbr/2024_day_6_part_2_go_what_might_i_miss_output_is/
+
+That simplified puzzle makes me think the problem is that he's not excluding places he's already travelled over. In this case, if you place an obstacle right in front of the guard after he passes it, you get a very short cycle.

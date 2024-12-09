@@ -3,50 +3,20 @@
 import sys
 
 debug = False
+visited = set()
 right = {-1: 1j, 1: -1j, 1j: 1, -1j: -1}   #dict of right turns from each direction
 dirchar = {-1: "^", 1: "v", 1j: ">", -1j: "<"}
 
-visited = set()
-blockers = set()
-
-
-def checkloop(cursor, direction):    #direction is numerical: N=-1, S=1, E=1j, W=-1j
-    global right
-    loopvisited = set()
-    loopgrid = grid.copy()
-    while True:
-        loopgrid[cursor] = "X"
-        if (cursor, direction) in visited: 
-            if debug: print_dic(loopgrid)
-            return True
-        if (cursor, direction) in loopvisited:
-            if debug: print_dic(loopgrid)
-            return True
-        loopvisited.add( (cursor, direction) )
-        try:    
-            if grid[cursor + direction] == "#":
-                direction = right[direction]
-            else:
-                cursor += direction
-        except: return False   #we are out of grid so no loop
-        
-        
-
-def go(cursor, direction):      #direction is numerical: N=-1, S=1, E=1j, W=-1j
-    visited.add( (cursor, direction) )
+def go(cursor, direction):  #direction is numerical: N=-1, S=1, E=1j, W=-1j
+    visited.add(cursor)
     grid[cursor] = dirchar[direction]
-    #if debug: print_dic(grid)
-    if debug: print(f"{cursor} {direction}")
+    if debug: print_dic(grid)
+    if debug: print(f"{cursor}\t{direction}")
     try:
         if grid[cursor + direction] == '#': return (cursor, right[direction])
-        else: 
-            if checkloop(cursor, right[direction]):
-                if debug: print_dic(grid)
-                blockers.add(cursor + direction)
-            return (cursor + direction, direction)
+        else: return (cursor + direction, direction)
     except:
         return (cursor, None)
-
 
 def print_dic(a):
     for r in range(maxrow):
@@ -82,7 +52,6 @@ with open(sys.argv[1], mode='r') as input:
 
 maxcol = len(t[0])
 maxrow = len(t)
-
 grid = grid2cplxdic(t)
 
 #find start
@@ -93,14 +62,11 @@ for k, v in grid.items():
 
 grid[cursor] = "^"
 #direction is numerical: N=-1, S=1, E=1j, W=-1j
-direction = -1      # -1 so we start to North
+direction = -1  # -1 so we start to North
 while True:
     (cursor, direction) = go(cursor, direction)
     if direction == None:
         break
 
-for el in blockers:
-    grid[el] = "O"
-
 print_dic(grid)
-print(len(blockers))
+print(len(visited))
