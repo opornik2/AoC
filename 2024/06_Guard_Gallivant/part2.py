@@ -14,6 +14,8 @@ def checkloop(cursor, direction):    #direction is numerical: N=-1, S=1, E=1j, W
     global right
     loopvisited = set()
     loopgrid = grid.copy()
+    loopgrid[cursor+direction] = "#"
+    direction = right[direction]
     while True:
         loopgrid[cursor] = "X"
         if (cursor, direction) in visited: 
@@ -24,7 +26,7 @@ def checkloop(cursor, direction):    #direction is numerical: N=-1, S=1, E=1j, W
             return True
         loopvisited.add( (cursor, direction) )
         try:    
-            if grid[cursor + direction] == "#":
+            if loopgrid[cursor + direction] == "#":
                 direction = right[direction]
             else:
                 cursor += direction
@@ -41,7 +43,7 @@ def go(cursor, direction):      #direction is numerical: N=-1, S=1, E=1j, W=-1j
     try:
         if grid[cursor + direction] == '#': return (cursor, right[direction])
         else: 
-            if not cursor+direction in visited and checkloop(cursor, right[direction]):
+            if not cursor+direction in visited and checkloop(cursor, direction):
                 if debug: print_dic(grid)
                 blockers.add(cursor + direction)
             return (cursor + direction, direction)
