@@ -34,13 +34,14 @@ def checkloop(cursor, direction):    #direction is numerical: N=-1, S=1, E=1j, W
 
 def go(cursor, direction):      #direction is numerical: N=-1, S=1, E=1j, W=-1j
     visited.add( (cursor, direction) )
+    visited.add(cursor)
     grid[cursor] = dirchar[direction]
-    #if debug: print_dic(grid)
+    if debug: print_dic(grid)
     if debug: print(f"{cursor} {direction}")
     try:
         if grid[cursor + direction] == '#': return (cursor, right[direction])
         else: 
-            if checkloop(cursor, right[direction]):
+            if not cursor+direction in visited and checkloop(cursor, right[direction]):
                 if debug: print_dic(grid)
                 blockers.add(cursor + direction)
             return (cursor + direction, direction)
