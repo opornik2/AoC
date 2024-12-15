@@ -8,19 +8,26 @@ debug = 1
 summ = 0
 dire = [1, -1, 1j, -1j]
 visited = set()
+plants = list()
+areas = list()
+area = defaultdict(int)
+perim = defaultdict(int)
 
-
-def find_neib(cursor, last):
+def find_neib(cursor, plant):
     global visited, recursions
-    visited.add(cursor)
-    if grid[cursor] == 9: 
-        tops[startpoint] += 1
+    possible_locations = set()
+    if cursor in visited: 
         return
+    visited.add(cursor)
     for dire in [-1j, 1j, -1, 1]:
         try:
-            if grid[cursor+dire] == last+1: 
-                find_neib(cursor+dire, grid[cursor])
+            if grid[cursor+dire] == plant: 
+                possible_locations.add(cursor+dire)
+                find_neib(cursor+dire, plant)
         except: pass
+    if debug: print(f"{cursor}\t{plant}")
+    area[len(plants)-1] += 1
+    perim[len(plants)-1] += 4 - len(possible_locations)    #number of borders is 4 minus no. of neib.
 
 
 def print_dic(a):
@@ -59,12 +66,16 @@ grid = grid2cplxdic(t)
 maxcol = len(t[0])
 maxrow = len(t)
 
-startpoints = [c for c, v in grid.items() if v == "0"]
-
 if debug: print_dic(grid)
 for k, v in grid.items():
     if k not in visited:
+        plants.append(v)
         find_neib(k, v)
 
 
+for k in area.keys():
+    s = area[k] * perim[k]
+    if debug: 
+        print(f"plant: {plants[k]}, area={area[k]} * perim={perim[k]} = {s}")
+    summ += s
 print(summ)

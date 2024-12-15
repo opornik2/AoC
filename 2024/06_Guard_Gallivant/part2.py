@@ -79,7 +79,6 @@ def grid2cplxdic(grid, ignore_chars=""):
 
 ##########
 
-#sys.setrecursionlimit(5000)
 with open(sys.argv[1], mode='r') as input:
     t = input.read().strip().split("\n")
 
