@@ -4,26 +4,29 @@ import sys
 from itertools import chain
 from collections import defaultdict
 
-# find all possible top 9s starting from 0, whatever path chosen
+# find all possible paths from 0 to 9
 
 debug = 0
 summ = 0
 dire = [1, -1, 1j, -1j]
-visited = defaultdict(set)
-trails = defaultdict(int)
+visited = set()       # here we will add visited next points, but remove them after recursion returns
+score = defaultdict(int)
 recursions = 0
 
 def find_neib(cursor):
     global recursions, startpoint
-    if cursor in visited[startpoint]: return
-    visited[startpoint].add(cursor)
+    if debug: print(f"cursor at {cursor} = {grid[cursor]}")
     if int(grid[cursor]) == 9:
-        trails[startpoint] += 1
+        score[startpoint] += 1
         return
     for dire in [-1j, 1j, -1, 1]:
         try:
             if int(grid[cursor+dire]) == int(grid[cursor])+1:
-                find_neib(cursor+dire)
+                if cursor+dire not in visited:
+                    visited.add(cursor+dire)
+                    find_neib(cursor+dire)
+        except: pass
+        try: visited.remove(cursor+dire)
         except: pass
 
 
@@ -67,8 +70,8 @@ startpoints = [c for c, v in grid.items() if v == "0"]
 
 if debug: print_dic(grid)
 for startpoint in startpoints:
-    trails[startpoint] = 0
+    score[startpoint] = 0
     find_neib(startpoint)
 
 
-print(sum(trails.values()))
+print(sum(score.values()))
