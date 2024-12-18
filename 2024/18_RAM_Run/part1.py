@@ -1,6 +1,29 @@
 #!/usr/bin/env python3
-
 import sys
+
+debug = True
+test = True
+sys.setrecursionlimit(20000)
+recur = 0
+total = 0
+grid = dict()
+steps = dict()
+path = list()
+graph = dict() # graph of nodes
+if test: maxrow = maxcol = 7
+else: maxrow = maxcol = 71
+startpoint = 0+0j
+endpoint = complex(maxrow-1, maxcol-2)
+last_crosses = [startpoint]
+visited = set()
+
+#potrzebna lista z droga (po kolei odwiedzane punkty) i sprawdzanie czy lista juz istnieje czy nie.
+#robimy liste, jak gotowa tworzymy z niej tuple i uzywamy go do hashowania slownika. Wartoscia jest ilosc krokow.
+
+steps[startpoint] = 0
+steps[endpoint] = 0
+
+# ----------------------------------------------------
 
 def find_all_paths(cursor):
     global recur, visited
@@ -28,7 +51,7 @@ def move(cursor, previous):
     path = []
     while True:
         path.append(cursor)
-        grid2[cursor] = "O"
+        grid[cursor] = "O"
         possible_directions = set()
         for d in 0+1j, -1, 0-1j, 1:
             try:
@@ -50,14 +73,14 @@ def move(cursor, previous):
             sys.exit(0)
 
 def move_to_next_cross(cursor, previous):
-    global grid2, path, last_crosses, graph, recur
+    global grid, path, last_crosses, graph, recur
     recur += 1
     # move to the next crossroad
     cursor, previous, pathlen, possible_directions = move(cursor, previous)
     # we are at crossroad
     #print()
-    #print_dic(grid2)
-    #grid2 = dict(grid)
+    #print_dic(grid)
+    #grid = dict(grid)
     #print(f"last_crosses:{last_crosses}")
     last_cross = last_crosses.pop()
     try:
@@ -118,33 +141,23 @@ def grid2cplxdic(grid, ignore_chars=""):
             dic[complex(row, col)] = char
     return dic
     # parsing such dic:  for k, v in dic.items()
-##########
+
+############################################################################
 
 with open(sys.argv[1], mode='r') as input:
     t = input.read().strip().split("\n")
 
-sys.setrecursionlimit(20000)
-recur = 0
-grid = grid2cplxdic(t)
-grid2 = dict(grid)
-total = 0
-steps = dict()
-path = list()
-graph = dict() # graph of nodes
-#maxsteps = 0
-maxcol = len(t[0])
-maxrow = len(t)
-startpoint = 0+1j
-last_crosses = [startpoint]
-endpoint = complex(maxrow-1, maxcol-2)
-visited = set()
+#create empty grid
+for y in range(maxrow):
+    for x in range(maxcol):
+        grid[complex(x, y)] = "."
 
-#potrzebna lista z droga (po kolei odwiedzane punkty) i sprawdzanie czy lista juz istnieje czy nie.
-#robimy liste, jak gotowa tworzymy z niej tuple i uzywamy go do hashowania slownika. Wartoscia jest ilosc krokow.
+#fill the grid with obstacles
+for line in t:
+    x, y = line.split(",")
+    grid[complex(int(y), int(x))] = "#"
 
-grid2[startpoint] = "O"
-steps[startpoint] = 0
-steps[endpoint] = 0
+grid[startpoint] = "O"
 
 move_to_next_cross(startpoint, startpoint)
 print("found all crosses")
@@ -160,7 +173,7 @@ find_all_paths(startpoint)
 print(f"found all {len(paths)} paths")
 
 
-#for each path count its length
+#for each path count its lenght
 #print(paths)
 summ = 0
 for path in paths:
