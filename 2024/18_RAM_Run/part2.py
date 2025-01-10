@@ -1,21 +1,25 @@
 #!/usr/bin/env python3
 import sys
 import networkx as nx
+#G.add_node(startpoint, steps=13)   #add new node with attribute
+#G.nodes[startpoint]['steps']=13  #node attribute changing
+#G.nodes.data()  #display nodes
+#G.add_edge(startpoint, endpoint, steps=14 )  #add new edge with attribute
+#G.edges[startpoint, endpoint]['steps']=14  #edge attribute changing
+#G[startpoint][endpoint]['steps']=14   #also edge attribute changing
 
 debug = True if "debug" in sys.argv else False
-sys.setrecursionlimit(200000)
 recur = 0
 grid = dict()
 graph = dict() # graph of nodes
 maxrow = maxcol = 71 if not "test" in sys.argv[1] else 7
+sys.setrecursionlimit(2 * maxrow * maxcol)
 startpoint = 0+0j
 endpoint = complex(maxrow-1, maxcol-1)
-visited = set()
 
 
 # ----------------------------------------------------
-
-def DFS(cursor):       # Depth First Search
+def DFS(cursor):  # Depth First Search (recursive)
     global recur
     recur += 1
     if debug: print(f"recur: {recur}")
@@ -28,7 +32,6 @@ def DFS(cursor):       # Depth First Search
                     DFS(cursor+dire)
         except: pass
     recur -= 1
-
 
 def print_dic(a):
     for r in range(0, maxrow):
@@ -68,25 +71,28 @@ for y in range(maxrow):
     for x in range(maxcol):
         grid[complex(x, y)] = " "
 
-#fill the grid with obstacles
+grid2 = grid.copy()
+# bruteforce method, adding one obstacle at a time anh checking (time 1m 47s)
+#fill the grid with obstacles until no path from start to end possible
+lowlimit = 1024
+highlimit = len(t)-1
 for i, line in enumerate(t):
-    if i >= 1024: break
+    if i >= lowlimit: break
     x, y = line.split(",")
     grid[complex(int(y), int(x))] = "#"
 
-grid[startpoint] = "."
-G = nx.Graph()
-#G.add_node(startpoint, steps=13)   #add new node with attribute
-#G.nodes[startpoint]['steps']=13  #node attribute changing
-#G.nodes.data()  #display nodes
-#G.add_edge(startpoint, endpoint, steps=14 )  #add new edge with attribute
-#G.edges[startpoint, endpoint]['steps']=14  #edge attribute changing
-#G[startpoint][endpoint]['steps']=14   #also edge attribute changing
-
-DFS(startpoint)
-for node in list(nx.shortest_path(G, source=startpoint, target=endpoint)):
-    grid[node] = "."
-    #input()
-    #print_dic(grid)
-if debug: print_dic(grid)
-print(nx.shortest_path_length(G, source=startpoint, target=endpoint))
+# bisection method, adding one obstacle at a time anh checking (time 1m 47s)
+#fill the grid with obstacles until no path from start to end possible
+while highlimit-1 > lowlimit:
+    j = (highlimit - lowlimit) // 2 + lowlimit
+    grid = grid2.copy()
+    for i, line in enumerate(t):
+        if i >= j: break
+        x, y = line.split(",")
+        grid[complex(int(y), int(x))] = "#"
+        visited = set()
+    G = nx.Graph()
+    DFS(startpoint)
+    print(f"{i}\t{line}")
+    if endpoint in G.nodes: lowlimit = j
+    else: highlimit = j
