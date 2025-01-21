@@ -33,6 +33,19 @@ def DFS(cursor):  # Depth First Search (recursive)
         except: pass
     recur -= 1
 
+def BFS(cursor):  # Breadth First Search (iteration)
+    q = [cursor]
+    visited.add(cursor)
+    while q:
+        cursor = q.pop(0)
+        for dire in [1j, 1, -1j, -1]:
+            try:
+                if grid[cursor+dire] == " " and cursor+dire not in visited:
+                    visited.add(cursor+dire)
+                    q.append(cursor+dire)
+                    G.add_edge(cursor, cursor+dire)
+            except: pass
+
 def print_dic(a):
     for r in range(0, maxrow):
         for c in range(0, maxcol):
@@ -92,7 +105,8 @@ while highlimit-1 > lowlimit:
         grid[complex(int(y), int(x))] = "#"
         visited = set()
     G = nx.Graph()
-    DFS(startpoint)
+    #DFS(startpoint)
+    BFS(startpoint)
     print(f"{i}\t{line}")
     if endpoint in G.nodes: lowlimit = j
     else: highlimit = j
