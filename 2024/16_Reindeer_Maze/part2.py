@@ -12,7 +12,8 @@ recur = 0
 
 # ----------------------------------------------------
 class Graph:
-    ''' from https://www.datacamp.com/tutorial/dijkstra-algorithm-in-python '''
+    ''' based on https://www.datacamp.com/tutorial/dijkstra-algorithm-in-python
+    and corrected by ChatGPT! '''
     def __init__(self, graph: dict = {}):
         self.graph = graph  # A dictionary for the adjacency list
 
@@ -22,35 +23,38 @@ class Graph:
         self.graph[node1][node2] = weight  # Else, add a connection to its neighbor
 
     def shortest_distances(self, source: str):
-        # Initialize the values of all nodes with infinity
+        # Initialize the distances to all nodes as infinity
         distances = {node: float("inf") for node in self.graph}
-        distances[source] = 0  # Set the source value to 0
+        distances[source] = 0  # Set the source distance to 0
+        
         # Initialize a priority queue
-        pq = [(0, source)]
-        heapify(pq)
-
-        # Create a set to hold visited nodes
-        visited = set()
-        while pq:  # While the priority queue isn't empty
-            current_distance, current_node = heappop(pq)  # Get the node with the min distance
-            current_node = complex(current_node)
-            if current_node in visited: continue  # Skip already visited nodes
-            visited.add(current_node)  # Else, add the node to visited set
-
-            for neighbor, weight in self.graph[current_node].items():
-                # Calculate the distance from current_node to the neighbor
-                tentative_distance = current_distance + weight
-                if tentative_distance < distances[neighbor]:
-                    distances[neighbor] = tentative_distance
-                    heappush(pq, (tentative_distance, str(neighbor)))
-
-        #find the shortest path
+        #With real,imag the priority queue remains valid even when distances are equal
+        # priority queue comaprison does not support pure complex numbers
+        pq = [(0, (source.real, source.imag))]   # (distance, node)
+        #heapify(pq)   #this is actually not needed
         predecessors = {node: None for node in self.graph}
-        for node, distance in distances.items():
-            for neighbor, weight in self.graph[node].items():
-                if distances[neighbor] == distance + weight:
-                    predecessors[neighbor] = node
+        while pq:  # While the priority queue isn't empty
+            current_distance, (real, imag) = heappop(pq)  # Get the node with the min distance
+            current_node = complex(real, imag)
+
+            # If the distance in the queue is outdated, skip it
+            if current_distance > distances[current_node]:
+                continue
+
+            # Relaxation step
+            for neib, weight in self.graph[current_node].items():
+                # Calculate the distance from current_node to the neib
+                tentative_distance = current_distance + weight
+                if tentative_distance < distances[neib]:
+                    distances[neib] = tentative_distance
+                    predecessors[neib] = current_node  # Update predecessor
+                    heappush(pq, (tentative_distance, (neib.real, neib.imag)))  #With real,imag the priority queue remains valid even when distances are equal, as '<' not supported between instances of 'complex' and 'complex'
+    
         return distances, predecessors
+
+    def shortest_distance(self, source: str, target: str):
+        distances, _ = self.shortest_distances(source)
+        return distances[target]
 
     def shortest_path(self, source: str, target: str):
         ''' By using the shortest_distances function, we generate the predecessors dictionary. 
@@ -69,7 +73,7 @@ class Graph:
         # Reverse the path and return it
         path.reverse()
         return path
-
+    
 def DFS(cursor):  # Depth First Search (recursive)
     global recur
     recur += 1
