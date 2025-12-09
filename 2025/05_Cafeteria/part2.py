@@ -21,29 +21,27 @@ for r in ranges_lines:
     #concat_ranges = itertools.chain(concat_ranges, range(int(start), int(end)+1))
     ranges.append( (int(start), int(end)) )
 
-for (start, end) in ranges:
+ranges2 = []
+while ranges:
+    (start, end) = ranges.pop(0)
     log(f"checking {start}-{end}")
     for (s, e) in ranges:
-        log(f"against {s}-{e}")
-        if start == s and end == e:
-            continue
-        if start >= s and end <= e:  #range is smaller than other range -> remove it
-            log(f"source smaller, removing {start}-{end}")
-            ranges.remove( (start, end) )
+        log(f"    against {s}-{e}")
+        if start >= s and end <= e:  #range is inside other range -> remove it
+            log(f"    source smaller, removing {start}-{end}")
         elif s <= start <= e <= end: #range ovelaps other range
-            total += end - s + 1
-            log(f"total={total}")
-            log(f"source overlaps high, removing both")
-            ranges.remove( (start, end) )
-            ranges.remove( (s, e) )
+            log(f"    source overlaps high")
+            start = e + 1
+            log(f"      shrinking source to {start}-{end}")
         elif start <= s <= end <= e:
-            total += e - start + 1
-            log(f"total={total}")
-            log(f"source overlaps low, removing both")
-            ranges.remove( (start, end) )
-            ranges.remove( (s, e) )
-    total += end - start + 1
-    log(f"total={total}")
-    #ranges.remove( (start, end) )
+            log(f"    source overlaps low")
+            end = s - 1
+            log(f"      shrinking source to {start}-{end}")
+    ranges2.append( (start, end) )
+
+
+while ranges2:
+     (start, end) = ranges2.pop(0)
+     total += end - start + 1
 
 print(total)
