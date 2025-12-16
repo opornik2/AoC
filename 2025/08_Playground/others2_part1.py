@@ -20,8 +20,8 @@ circuit_count = len(circuits)
 
 
 for connection_count, dist in enumerate(sorted_dists):
-    print(connection_count)
     node_i, node_j = node_pairs_by_dist[dist]
+    print(f"{node_i} - {node_j}")
     ci = circuit_indices_by_node[node_i]
     cj = circuit_indices_by_node[node_j]
     if ci != cj:
@@ -31,8 +31,10 @@ for connection_count, dist in enumerate(sorted_dists):
         circuits[cj] = {}
         circuit_count -= 1
     connection_count += 1
-    if connection_count == sys.argv[2]:
+    print(f"conn_count={connection_count}\tdist={dist}\n")
+    if connection_count == int(sys.argv[2]):
         part_1 = prod(sorted([len(c) for c in circuits if c])[-3:])
+        break
     if circuit_count == 1:
         break
 
@@ -41,4 +43,5 @@ part_2 = node_coords[node_i][0] * node_coords[node_j][0]
 
 
 
-print(f"Part 1: {part_1}\nPart 2: {part_2}")
+print(f"Part 1: {part_1}")
+#\nPart 2: {part_2}")
