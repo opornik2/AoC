@@ -71,7 +71,6 @@ t = grid.split("\n")
 maxcol = len(t[0])-1
 maxrow = len(t)-1
 grid = grid2cplxdic(t)
-splits = 0
 endnodes = []
 total = 0
 
@@ -81,24 +80,24 @@ for k, v in grid.items():
         startnode = k
         grid[k] = '|'
         G.add_node(k)
-    try:
-        if ('.' in v or '|' in v) and '|' in grid[k-1]:
+        continue
+    if k.real == 0: continue
+    if k.real == maxrow: endnodes.append(k)
+    if '|' in grid[k-1]:
+        if '.' in v or '|' in v:
             grid[k] = '|'
             G.add_edge(k-1, k)
-            if k.real == maxrow:
-                endnodes.append(k)
-    except: pass
-    if '^' in v and '|' in grid[k-1]:
-        splits += 1
-        G.remove_node(k-1)
-        try:
-            grid[k-1j] = '|'
-            G.add_edge(k-2, k-1j)
-        except: pass
-        try:
-            grid[k+1j] = '|'
-            G.add_edge(k-2, k+1j)
-        except: pass
+
+        elif '^' in v:
+            G.remove_node(k-1)
+            try:
+                grid[k-1j] = '|'
+                G.add_edge(k-2, k-1j)
+            except: pass
+            try:
+                grid[k+1j] = '|'
+                G.add_edge(k-2, k+1j)
+            except: pass
     #print_dic(grid)
 
 print_dic(grid)

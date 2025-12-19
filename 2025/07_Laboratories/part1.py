@@ -53,6 +53,6 @@ for k, v in grid.items():
         except: pass
         try: grid[k+1j] = '|'
         except: pass
-    #print_dic(grid)
+    print_dic(grid)
 
 print(splits)

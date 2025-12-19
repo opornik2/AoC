@@ -44,38 +44,64 @@ for line in t:
     for el in outp:
         G.add_edge(inp, el)
 
-cutoff = 15
+
+# let's remove some unnecessary nodes
+
 #print(G.edges.data())  #display nodes
 dac = 0
 fft = 0
-#DFS(sys.argv[2], "out")
+DFS("svr", "out")
 print(f"there are {len(list(G.nodes()))} nodes")
-skip = []
-for snode in G.nodes():
-    dac = 0
-    fft = 0
-    visited = set()
-    DFS(snode, "out")
-    if dac == 0 and fft == 0:
-        print(snode)
-        skip.append(snode)
 
-#sys.exit()
+# skip = []
+# for snode in G.nodes():
+#     if "fft" in snode or "dac" in snode:
+#         break
+#     dac = 0
+#     fft = 0
+#     visited = set()
+#     DFS(snode, "out")
+#     if dac == 0 and fft == 0:
+#         print(snode)
+#         skip.append(snode)
 
-#skip.remove("fft")
-#skip.remove("dac")
 
-for node in skip:
-    G.remove_node(node)
-print(G.nodes.data())  #display nodes
+# for node in skip:
+#     G.remove_node(node)
+# for node in sorted(list(G.nodes.data())):  #display nodes
+#     print(node)
 
-print(f"there are {len(list(G.nodes()))} nodes")
+
+cutoff = 13
+#print(f"there are {len(list(G.nodes()))} nodes")
 #print(len([p for p in nx.all_simple_paths(G, "svr", "out", cutoff) if "dac" in p and "fft" in p]))
-#print(len(list(nx.all_simple_paths(G, "dac", "out", cutoff))))  # = 7314
+#print(len(list(nx.all_simple_paths(G, "svr", "fft", cutoff))))  # inf
 #print(len(list(nx.all_simple_paths(G, "fft", "dac", cutoff))))  # inf
+print(len(list(nx.all_simple_paths(G, "dac", "out", cutoff))))  # = 7314
 #print(len(list(nx.all_simple_paths(G, "fft", "out", cutoff))))  # inf
-print(len(list(nx.all_simple_paths(G, "svr", "out"))))  # inf
-#print(paths)
+
+#print(len(list(nx.all_simple_paths(G, "svr", "out"))))  # inf
+
+
+# dac = 0
+# fft = 0
+# visited = set()
+# DFS("dac", "out")
+
+# for snode in G.nodes():
+#     dac = 0
+#     fft = 0
+#     visited = set()
+#     DFS(snode, "out")
+
+
+
+
+
+
+
+
+
 
 
 #G.add_node(startpoint, steps=13)   #add new node with attribute
