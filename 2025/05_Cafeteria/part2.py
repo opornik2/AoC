@@ -23,12 +23,16 @@ for r in ranges_lines:
 
 ranges2 = []
 while ranges:
+    skip = False
     (start, end) = ranges.pop(0)
     log(f"checking {start}-{end}")
-    for (s, e) in ranges:
+    for i, (s, e) in enumerate(ranges):
         log(f"    against {s}-{e}")
         if start >= s and end <= e:  #range is inside other range -> remove it
             log(f"    source smaller, removing {start}-{end}")
+            # do not add it to ranges2
+            skip = True
+            break
         elif s <= start <= e <= end: #range ovelaps other range
             log(f"    source overlaps high")
             start = e + 1
@@ -37,7 +41,12 @@ while ranges:
             log(f"    source overlaps low")
             end = s - 1
             log(f"      shrinking source to {start}-{end}")
-    ranges2.append( (start, end) )
+        elif start <= s <= e <= end:
+            log(f"    source bigger, removing destination {s}-{e}")
+            ranges[i]=(0,-1)
+    if not skip: ranges2.append( (start, end) )
+    print(ranges2)
+    print("\n")
 
 
 while ranges2:

@@ -8,6 +8,7 @@ graph = dict() # graph of nodes
 visited = set()
 recur = 0
 allpaths = []
+pathnum = 0
 # ----------------------------------------------------
 
 def print_dic(a):
@@ -39,11 +40,14 @@ def grid2cplxdic(grid, ignore_chars=""):
     # parsing such dic:  for k, v in dic.items()
 
 def modDFS(src, dst, path):  # modified Depth First Search (recursive) to search for all possible paths
-    global recur, visited
-    if debug: print(f"node: {src}\trecur: {recur}")
+    global recur, visited, pathnum
+    #if debug: print(f"node: {src}\trecur: {recur}")
     if src == dst:
         allpaths.append(copy.deepcopy(path))
-        if debug: print(f"new path: {path}")
+        if debug: 
+            pathnum += 1
+            print(f"{pathnum}")
+            print(f"new path: {path}")
     else:
         recur += 1
         for edge in G.edges(src):
@@ -98,13 +102,16 @@ for k, v in grid.items():
                 grid[k+1j] = '|'
                 G.add_edge(k-2, k+1j)
             except: pass
+        else:
+            print("something wrong happended!!")
+            sys.exit(1)
     #print_dic(grid)
 
 print_dic(grid)
-modDFS(startnode, 141+2j, [startnode])
+#modDFS(startnode, 15+6j, [startnode])   # too many paths even fo 141+15j,  for next endnodes it grows exponentially!!! no possible to calculate!!!
 #[print(el[0]) for el in G.nodes.data()]  #display nodes
 #[print(el) for el in G.edges.data()]  #display nodes
-sys.exit()
+#sys.exit()
 
 for endnode in endnodes:
     allpaths = []
